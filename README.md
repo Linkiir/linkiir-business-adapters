@@ -1,89 +1,139 @@
 # Linkiir Business Adapters
 
-Enterprise business systems: CRM, ERP, ITSM, HR, identity and directory services, and scheduling and workforce operations.
+Enterprise business system adapters: CRM, ERP, ITSM, HR, identity and directory services, and scheduling and workforce operations.
 
-**Catalog id:** `lkbz` — every node template in this catalog carries a `LKBZ_` node type id.
-**Published adapters:** 2 &nbsp;•&nbsp; **Published libraries:** 2
+A **catalog** is a package of adapter content that one Linkiir Grid publishes and other grids subscribe to. Subscribing adds these adapters to your grid without a product upgrade.
+
+| | |
+|---|---|
+| **Catalog id** | `lkbz` |
+| **Publisher** | Linkiir Inc |
+| **Adapters** | 2 |
+| **Libraries** | 2 |
+| **Documentation** | [https://help.linkiir.com/docs/catalogs/](https://help.linkiir.com/docs/catalogs/) |
 
 ---
 
 ## Subscribe
 
-In Grid, go to **Settings → Catalogs → Subscribe** and paste:
+In Grid, open **Settings → Catalogs → Subscribe** and paste this URL:
 
 ```
 https://github.com/Linkiir/linkiir-business-adapters
 ```
 
-This is a public repository, so Grid clones it anonymously and no SSH key is needed. Leave **Ref** at `main` to track the latest published content.
+| Field | Value |
+|---|---|
+| **URL** | the address above |
+| **Ref** | `main` |
+| **SSH private key** | leave blank — this is a public repository, cloned anonymously |
+| **Install name** | `linkiir-business-adapters` |
 
-Install it under the name **`linkiir-business-adapters`**. The install name is recorded on every node built from this catalog, so keeping it consistent makes a node's origin readable in support.
+Use the install name exactly as given. Grid records it on every node built from this catalog, so a consistent name keeps a node's origin readable when you contact support.
 
-Subscribing needs the **Manage catalogs** permission (Administration tier).
+Subscribing requires the **Manage catalogs** permission (Administration tier). Full instructions, including how to review an update before applying it, are in [the Catalogs documentation](https://help.linkiir.com/docs/catalogs/).
 
-## Published adapters
+## Adapters
 
-| Adapter | Slug | Node type | Node type id | Version | Libraries |
-|---|---|---|---|---|---|
-| Dynamics CRM Adapter | `dynamics_crm_adapter` | source | `LKBZ_DYNAMICS_CRM_ADAPTER` | 1.0.0 | dynamics_crm 1.0.0 |
-| Salesforce Adapter | `salesforce_adapter` | transform | `LKBZ_SALESFORCE_ADAPTER` | 1.0.0 | salesforce 1.0.0 |
+| Adapter | Type | Trigger | Version | Node type id |
+|---|---|---|---|---|
+| **Dynamics CRM Adapter** | source | interval | 1.0.0 | `LKBZ_DYNAMICS_CRM_ADAPTER` |
+| **Salesforce Adapter** | transform | on message | 1.0.0 | `LKBZ_SALESFORCE_ADAPTER` |
 
-## Published libraries
+### Dynamics CRM Adapter
 
-| Library | Version | Purpose |
+Polls a Microsoft Dynamics 365 CRM instance with a FetchXML query on each interval and pushes each matching record downstream as JSON.
+
+`LKBZ_DYNAMICS_CRM_ADAPTER` · source node · version 1.0.0 · 7 configuration fields · library `dynamics_crm` 1.0.0
+
+Credentials required: **Password**. These ship empty — see [Credentials](#credentials).
+
+### Salesforce Adapter
+
+Queries and updates Salesforce records via the REST API. Receives inbound data specifying what to query or modify, executes the operation, and pushes results downstream.
+
+`LKBZ_SALESFORCE_ADAPTER` · transform node · version 1.0.0 · 7 configuration fields · library `salesforce` 1.0.0
+
+Credentials required: **Client Secret**, **Key**. These ship empty — see [Credentials](#credentials).
+
+## Libraries
+
+Shared Lua modules the adapters above depend on. A node pins the exact version it uses, and published versions are immutable, so several can sit side by side.
+
+| Library | Version | Used by |
 |---|---|---|
-| `dynamics_crm` | 1.0.0 | Microsoft Dynamics 365 CRM client. Handles OAuth 2.0 authentication against Azure AD and provides FetchXML query and generic request helpers. Copy the dynamics_crm/ folder into a node and add it to package.path. |
-| `salesforce` | 1.0.0 | Salesforce REST API client. Handles OAuth 2.0 client_credentials authentication and provides query, modify, modifyBatch, delete and custom request helpers. Copy the salesforce/ folder into a node and add it to package.path. |
+| `dynamics_crm` | 1.0.0 | Dynamics CRM Adapter |
+| `salesforce` | 1.0.0 | Salesforce Adapter |
 
-## Roadmap
+### `dynamics_crm` 1.0.0
 
-| Adapter | Node type | Connects to | Status |
-|---|---|---|---|
-| Salesforce Health Cloud | transform | Health Cloud object model | Planned |
-| ServiceNow Adapter | source, destination | ITSM incidents | Planned |
-| Jira Adapter | source, destination | Jira and JSM issues | Planned |
-| SAP S/4HANA / Oracle ERP / NetSuite / Workday | source, destination | ERP and HR | Planned |
-| LDAP / Active Directory / Entra ID / Okta | source | identity and directory | Planned |
-| SCIM 2.0 Provisioning | destination | user provisioning | Planned |
-| QGenda / TeleTracking / symplr / Phreesia / Luma | source, destination | scheduling and operations | Planned |
+Microsoft Dynamics 365 CRM client. Handles OAuth 2.0 authentication against Azure AD and provides FetchXML query and generic request helpers. Copy the dynamics_crm/ folder into a node and add it to package.path.
 
-Status meanings: **Next** is in active development, **Planned** is scoped but not started. See [the Integration Network](https://linkiir.com/network/) for the full adapter list and where each one stands.
+Modules: `dynamics_crm.lua`, `dynamics_crm_auth.lua`, `dynamics_crm_http.lua`, `dynamics_crm_token.lua`
 
-## Configuration and credentials
+### `salesforce` 1.0.0
 
-Every adapter ships with its credential fields **empty**, and that is deliberate. Password fields are encrypted with each grid's own key, so a value shipped from here could not decrypt on your machine — it would fail with an error blaming your key. Fill them in on the node after you build it.
+Salesforce REST API client. Handles OAuth 2.0 client_credentials authentication and provides query, modify, modifyBatch, delete and custom request helpers. Copy the salesforce/ folder into a node and add it to package.path.
 
-Two fields appear on most adapters and are worth knowing:
+Modules: `salesforce.lua`, `salesforce_auth.lua`, `salesforce_http.lua`, `salesforce_token.lua`
 
-- **Live Mode** — when off, requests are prepared and logged but never sent. Use it to prove configuration before touching a real system.
-- **Verify TLS** — leave on. Turn it off only against a local service with a self-signed certificate.
+## Credentials
 
-## Support and status
+Every adapter here ships with its credential fields **empty**, by design. Password fields are encrypted with your own grid's key, so a value shipped from this repository could not be decrypted on your machine. Enter yours on the node after you build it.
 
-Adapters here are **Beta** unless the roadmap table says otherwise: they work and run somewhere, but the template is still being finished, so expect a Linkiir engineer alongside you on a first deployment. **GA** means the template is hardened and running across multiple customers.
+Two fields appear on most adapters:
 
-Every adapter has a named owner at Linkiir who maintains it. For a problem with a specific adapter, quote its node type id.
+| Field | What it does |
+|---|---|
+| **Live Mode** | When off, requests are prepared and logged but never sent. Use it to confirm configuration and authentication before touching a live system. |
+| **Verify TLS** | Verifies the server's certificate. Leave on. Turn it off only against a local service with a self-signed certificate. |
 
-## Versioning
+## Versions and updates
 
-- **Adapters** are versioned by the `version` field in `node_config.json`. A change that does not move the version forward is refused by the validator.
-- **Library versions are immutable.** A published `libraries/<name>/<version>/` directory is never edited; a fix ships as a new version directory. Several versions sit side by side and each node pins the one it uses, so updating this catalog cannot disturb a node pinned to an older library.
+| | |
+|---|---|
+| **Adapters** | Versioned by the `version` field on each adapter. A change that does not move the version forward is rejected, so one version always means one specific set of files. |
+| **Libraries** | Immutable. A published version is never edited; a fix ships as a new version. Nodes pinned to an older version are undisturbed by an update. |
 
-Before applying an update, Grid shows you the incoming commit and diff. Read [CHANGELOG.md](CHANGELOG.md) for what changed and why.
+Grid shows you the incoming commit and diff before applying an update. See [CHANGELOG.md](CHANGELOG.md) for what changed in each release.
 
 ## Repository layout
 
 ```
-catalog.json                              the manifest Grid validates
-nodes/<slug>/node_config.json             an adapter's definition
+catalog.json                              catalog manifest
+nodes/<slug>/node_config.json             an adapter definition
 nodes/<slug>/*.lua                        its scripts
 nodes/<slug>/samples/                     de-identified test messages
 libraries/<name>/<version>/library.json   a published library version
 libraries/<name>/<version>/<name>/*.lua   its modules
 ```
 
-The layout is identical to Grid's own on-disk layout, so a pull needs no transform.
+The layout matches Grid's own on-disk layout, so a pull applies no transform.
 
----
+## Other Linkiir catalogs
 
-Published by Linkiir Inc. Part of the [Linkiir catalog set](https://github.com/Linkiir?q=adapters) — see [the Catalogs documentation](https://help.linkiir.com/docs/catalogs/) for how catalogs reach a grid.
+| Catalog | Covers |
+|---|---|
+| [linkiir-fhir-adapters](https://github.com/Linkiir/linkiir-fhir-adapters) | FHIR adapters and FHIR tooling |
+| [linkiir-ehr-adapters](https://github.com/Linkiir/linkiir-ehr-adapters) | EHR and practice management over proprietary APIs, openEHR |
+| [linkiir-interop-adapters](https://github.com/Linkiir/linkiir-interop-adapters) | HL7 v2, C-CDA, IHE, HIE, public health, engine migration |
+| [linkiir-payer-adapters](https://github.com/Linkiir/linkiir-payer-adapters) | X12 EDI, clearinghouses, payer APIs, pharmacy |
+| [linkiir-diagnostics-adapters](https://github.com/Linkiir/linkiir-diagnostics-adapters) | labs and LIS, imaging and PACS, devices |
+| [linkiir-data-adapters](https://github.com/Linkiir/linkiir-data-adapters) | relational and NoSQL databases, warehouses, BI |
+| [linkiir-transport-adapters](https://github.com/Linkiir/linkiir-transport-adapters) | object storage, file transport, message brokers |
+| [linkiir-ai-adapters](https://github.com/Linkiir/linkiir-ai-adapters) | AI and LLM services |
+| [linkiir-notification-adapters](https://github.com/Linkiir/linkiir-notification-adapters) | chat, SMS, voice, email, paging |
+| **linkiir-business-adapters** _(this one)_ | CRM, ERP, ITSM, HR, identity, scheduling |
+
+## Documentation and support
+
+Product documentation lives at **[help.linkiir.com](https://help.linkiir.com/docs/catalogs/)** — how catalogs work, subscribing and reviewing updates, building nodes from catalog adapters, and offline delivery. This repository holds the adapter content itself; it is not the documentation site.
+
+For a question about a specific adapter, quote its node type id.
+
+## License
+
+Copyright © Linkiir Inc. All rights reserved.
+
+This source is published so Linkiir Grid customers can read, audit and run it. It is **not** open source. See [LICENSE](LICENSE) for the terms that apply.
+
