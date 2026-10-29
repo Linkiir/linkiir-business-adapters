@@ -55,5 +55,72 @@
     "dynamics_crm": "1.0.0"
   },
   "config_version": 1,
-  "version": "1.0.0"
+  "version": "1.0.1",
+  "template_origin": {
+    "catalog": "linkiir-business-adapters",
+    "template_id": "group:linkiir-business-adapters/dynamics_crm_adapter",
+    "commit": "b1012db8a20c6ed9db5cfedc52aee2f123db6d5f",
+    "version": "1.0.0",
+    "linked": false,
+    "files": [
+      "dynamics_crm/dynamics_crm.lua",
+      "dynamics_crm/dynamics_crm_auth.lua",
+      "dynamics_crm/dynamics_crm_http.lua",
+      "dynamics_crm/dynamics_crm_token.lua",
+      "main.lua",
+      "samples/empty.txt"
+    ],
+    "field_defs": [
+      {
+        "label": "Interval",
+        "field_type": "number",
+        "description": "How often, in milliseconds, the runtime invokes the polling script.",
+        "list_options": null,
+        "depends_on": null
+      },
+      {
+        "label": "URL",
+        "field_type": "string",
+        "description": "Base URL of the Dynamics 365 instance, e.g. https://org.crm.dynamics.com/. The Web API path (api/data/v9.2/) is appended to it, so a trailing slash is expected (one is added if omitted).",
+        "list_options": null,
+        "depends_on": null
+      },
+      {
+        "label": "Username",
+        "field_type": "string",
+        "description": "Azure AD username for the Resource Owner Password Credentials grant.",
+        "list_options": null,
+        "depends_on": null
+      },
+      {
+        "label": "Password",
+        "field_type": "password",
+        "description": "Password for the Azure AD user account.",
+        "list_options": null,
+        "depends_on": null
+      },
+      {
+        "label": "FetchXML Query",
+        "field_type": "string",
+        "description": "The FetchXML query to execute on each poll. Use {{curr_date}} as a placeholder for today's date (YYYY-MM-DD). The entity name in the query determines which entity set is queried.",
+        "list_options": null,
+        "depends_on": null
+      },
+      {
+        "label": "Live Mode",
+        "field_type": "bool",
+        "description": "When off, requests are simulated and no data leaves the runtime. Authentication is always performed live so credential problems surface immediately.",
+        "list_options": null,
+        "depends_on": null
+      },
+      {
+        "label": "Verify TLS",
+        "field_type": "bool",
+        "description": "Whether to verify the Dynamics server's TLS certificate. Leave on outside of local testing against a proxy.",
+        "list_options": null,
+        "depends_on": null
+      }
+    ]
+  },
+  "min_grid_version": "1.2.0"
 }
