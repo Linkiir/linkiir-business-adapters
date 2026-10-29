@@ -1,0 +1,11 @@
+{
+  "name": "salesforce",
+  "description": "Salesforce REST API client. Handles OAuth 2.0 client_credentials authentication and provides query, modify, modifyBatch, delete and custom request helpers. Copy the salesforce/ folder into a node and add it to package.path.",
+  "version": "1.1.0",
+  "origin": {
+    "catalog": "linkiir-business-adapters",
+    "name": "salesforce",
+    "version": "1.0.0",
+    "installed_at": "2026-10-28T20:11:15+00:00"
+  }
+}

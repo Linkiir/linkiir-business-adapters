@@ -52,10 +52,10 @@
     }
   ],
   "library_deps": {
-    "salesforce": "1.0.0"
+    "salesforce": "1.1.0"
   },
   "config_version": 1,
-  "version": "1.0.1",
+  "version": "1.1.0",
   "template_origin": {
     "catalog": "linkiir-business-adapters",
     "template_id": "group:linkiir-business-adapters/salesforce_adapter",
