@@ -1,0 +1,11 @@
+{
+  "name": "dynamics_crm",
+  "description": "Microsoft Dynamics 365 CRM client. Handles OAuth 2.0 authentication against Azure AD and provides FetchXML query and generic request helpers. Copy the dynamics_crm/ folder into a node and add it to package.path.",
+  "version": "1.1.0",
+  "origin": {
+    "catalog": "linkiir-business-adapters",
+    "name": "dynamics_crm",
+    "version": "1.0.0",
+    "installed_at": "2026-10-28T20:11:15+00:00"
+  }
+}
